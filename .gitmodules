@@ -1,0 +1,9 @@
+[submodule "nestjs-slottracker"]
+	path = nestjs-slottracker
+	url = https://github.com/valmojr/nestjs-slottracker.git
+[submodule "nextjs-slottracker"]
+	path = nextjs-slottracker
+	url = https://github.com/valmojr/nextjs-slottracker.git
+[submodule "nestjs-slottracker-discordbot"]
+	path = nestjs-slottracker-discordbot
+	url = https://github.com/valmojr/nestjs-slottracker-discordbot.git
