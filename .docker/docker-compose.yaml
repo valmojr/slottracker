@@ -50,5 +50,6 @@ services:
         ports:
             - '80:80' #HTTP
         depends_on:
+            - db
             - nestjs-slottracker
             - nestjs-slottracker-discordbot
