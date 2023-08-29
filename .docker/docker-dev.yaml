@@ -1,0 +1,55 @@
+services:
+    db:
+        image: postgres
+        container_name: postgres_container
+        restart: always
+        ports:
+            - '5432:5432' # PostgreSQL
+        volumes:
+            - ./data:/var/lib/postgresql/data
+        environment:
+            - POSTGRES_DB=mydb
+            - POSTGRES_USER=myuser
+            - POSTGRES_PASSWORD=mypassword
+
+    nestjs-slottracker:
+        build:
+            context: ./nestjs-slottracker
+            dockerfile: Dockerfile
+        container_name: nestjs-slottracker
+        restart: always
+        ports:
+            - '5555:5555' # Prisma Studio
+            - '8080:8080' # Node.js API
+        environment:
+            - PGHOST=db
+            - PGPORT=5432
+            - PGDATABASE=mydb
+            - PGUSER=myuser
+            - PGPASSWORD=mypassword
+        depends_on:
+            - db
+
+    nestjs-slottracker-discordbot:
+        build:
+            context: ./nestjs-slottracker-discordbot
+            dockerfile: Dockerfile
+        container_name: nestjs-slottracker-discordbot
+        restart: always
+        ports:
+            - '8081:8081' # Alt
+        depends_on:
+            - nestjs-slottracker
+
+    nextjs-slottracker:
+        build:
+            context: ./nextjs-slottracker
+            dockerfile: Dockerfile
+        container_name: nextjs-slottracker
+        restart: always
+        ports:
+            - '80:80' #HTTP
+        depends_on:
+            - db
+            - nestjs-slottracker
+            - nestjs-slottracker-discordbot
