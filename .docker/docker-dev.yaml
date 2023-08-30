@@ -29,7 +29,7 @@ services:
             - PGPASSWORD=mypassword
         depends_on:
             - db
-
+  
     nestjs-slottracker-discordbot:
         build:
             context: ./nestjs-slottracker-discordbot
