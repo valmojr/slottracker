@@ -11,11 +11,17 @@ services:
             - POSTGRES_DB=mydb
             - POSTGRES_USER=myuser
             - POSTGRES_PASSWORD=mypassword
+        networks:
+            slottracker_network:
+                ipv4_address: 172.20.0.2
 
     nestjs-slottracker:
+        image: node
         build:
             context: ./nestjs-slottracker
             dockerfile: Dockerfile
+        volumes:
+            - ./nestjs-slottracker:/usr/src/app
         container_name: nestjs-slottracker
         restart: always
         ports:
@@ -27,29 +33,54 @@ services:
             - PGDATABASE=mydb
             - PGUSER=myuser
             - PGPASSWORD=mypassword
+        networks:
+            slottracker_network:
+                ipv4_address: 172.20.0.3
         depends_on:
             - db
+        command: sh -c "npm install && npm run start:dev"
 
     nestjs-slottracker-discordbot:
+        image: node
         build:
             context: ./nestjs-slottracker-discordbot
             dockerfile: Dockerfile
+        volumes:
+            - ./nestjs-slottracker-discordbot:/usr/src/app
         container_name: nestjs-slottracker-discordbot
         restart: always
         ports:
             - '8081:8081' # Alt
+        networks:
+            slottracker_network:
+                ipv4_address: 172.20.0.4
         depends_on:
             - nestjs-slottracker
+        command: sh -c "npm install && npm run start:dev"
 
     nextjs-slottracker:
+        image: node
         build:
             context: ./nextjs-slottracker
             dockerfile: Dockerfile
+        volumes:
+            - ./nextjs-slottracker:/usr/src/app
         container_name: nextjs-slottracker
         restart: always
         ports:
             - '80:80' #HTTP
+        networks:
+            slottracker_network:
+                ipv4_address: 172.20.0.5
         depends_on:
             - db
             - nestjs-slottracker
             - nestjs-slottracker-discordbot
+        command: sh -c "npm install && npm run dev"
+
+networks:
+    slottracker_network:
+        ipam:
+            driver: default
+            config:
+                - subnet: 172.20.0.0/16
